@@ -271,7 +271,7 @@ int main(){
     printf("Wins:   %d\n", totalwins);
     printf("Losses: %d\n", totallosses);
     printf("Games:  %d\n", totalwins + totallosses);
-    printf("Win Percentage: %.1f", win_percentage);
+    printf("Win Percentage: %.1f\n", win_percentage);
     printf("=======================\n");
     // =====================================================================
 
