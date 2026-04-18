@@ -6,18 +6,24 @@
 //===========================================Project Features=============================================
 // 1. Basic (random word selection from word bank)
 // 2. Difficulty level according to the word length
-// 3. Display of guessed letters and remaining attempts
+// 3. Display of guessed letters & remaining attempts
 // 4. Displays the letters already entered by user regardless of correct or incorrect 
 // 5. Displays hangman
 // 6. Play again functionality without restarting the program
-// 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt  ← NEW
+// 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt
+// 8. Score tracking — wins and losses tracked across rounds  ← NEW
 //=================================================================================================================
 
 int main(){
 
     char playagain;
 
-    srand(time(NULL)); // seed once outside the loop
+    srand(time(NULL));
+
+    // ===================== NEW: Score Tracking =====================
+    int totalwins = 0;
+    int totallosses = 0;
+    // ===============================================================
 
     do {
 
@@ -58,15 +64,18 @@ int main(){
             printf("Difficulty Level: Hard\n");
         }
 
+        // ===================== NEW: Show current score at start of each round =====================
+        printf("Score -> Wins: %d | Losses: %d\n", totalwins, totallosses);
+        // ==========================================================================================
+
         //To avoid the user to enter same alphabet again
         char used[26];
         int usedcount=0;
 
         int wrong=0;
+        int hints=3;
 
-        // ===================== NEW: Hint System =====================
-        int hints=3; // player gets 3 hints per game
-        // ===========================================================
+        int roundresult = 0; // 1 = win, -1 = loss
 
         while(attempts>0){
             //printf _ _ acc to word
@@ -86,13 +95,12 @@ int main(){
             }
             printf("\n");
 
-            //Takes input of guess
             printf("\nAttempts left: %d | Hints left: %d (type '?' for a hint)\n", attempts, hints);
             printf("Enter a letter: ");
             scanf(" %c", &guess);
             guess = tolower(guess);
 
-            // ===================== NEW: Hint System =====================
+            // Hint System
             if(guess == '?'){
                 if(hints <= 0){
                     printf("No hints left!\n");
@@ -103,7 +111,6 @@ int main(){
                     continue;
                 }
 
-                // find all unguessed positions
                 int unguessed[20];
                 int count = 0;
                 for(int i = 0; i < length; i++){
@@ -118,12 +125,10 @@ int main(){
                     continue;
                 }
 
-                // pick a random unguessed position and reveal it
                 int pick = unguessed[rand() % count];
                 char revealed = selectedword[pick];
                 guessed[pick] = revealed;
 
-                // also add to used letters so it shows up
                 used[usedcount] = revealed;
                 usedcount++;
 
@@ -132,7 +137,6 @@ int main(){
                 hints--;
                 printf("Hint used! The letter '%c' has been revealed. (-1 attempt)\n", revealed);
             }
-            // ===========================================================
             else {
 
                 //To avoid the user to enter same alphabet again
@@ -153,7 +157,6 @@ int main(){
 
                 correct = 0;
 
-                //checks for the alphabet (guess) in the word
                 for(int i=0;i<length;i++){
                     if(selectedword[i]==guess && guessed[i]=='_'){
                         guessed[i]=guess;
@@ -233,6 +236,7 @@ int main(){
 
             if (win) {
                 printf("\nYOU WIN! The word was: %s\n", selectedword);
+                roundresult = 1;
                 attempts = 0;
                 break;
             }
@@ -241,13 +245,33 @@ int main(){
 
         if(wrong==6){
             printf("\nYOU LOSE! The word was: %s\n", selectedword);
+            roundresult = -1;
         }
+
+        // ===================== NEW: Update and display score =====================
+        if(roundresult == 1){
+            totalwins++;
+        } else if(roundresult == -1){
+            totallosses++;
+        }
+        printf("\n----- Score -----\n");
+        printf("Wins: %d | Losses: %d\n", totalwins, totallosses);
+        printf("-----------------\n");
+        // =========================================================================
 
         printf("\nDo you want to play again? (y/n): ");
         scanf(" %c", &playagain);
         playagain = tolower(playagain);
 
     } while(playagain == 'y');
+
+    // ===================== NEW: Final summary on quit =====================
+    printf("\n===== Final Score =====\n");
+    printf("Wins:   %d\n", totalwins);
+    printf("Losses: %d\n", totallosses);
+    printf("Games:  %d\n", totalwins + totallosses);
+    printf("=======================\n");
+    // =====================================================================
 
     printf("\nThanks for playing! Goodbye.\n");
 
