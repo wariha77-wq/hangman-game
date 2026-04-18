@@ -23,6 +23,7 @@ int main(){
     // ===================== NEW: Score Tracking =====================
     int totalwins = 0;
     int totallosses = 0;
+    float win_percentage = 0;
     // ===============================================================
 
     do {
@@ -264,12 +265,13 @@ int main(){
         playagain = tolower(playagain);
 
     } while(playagain == 'y');
-
+    win_percentage = (float)totalwins/(float)(totalwins + totallosses) * 100;
     // ===================== NEW: Final summary on quit =====================
     printf("\n===== Final Score =====\n");
     printf("Wins:   %d\n", totalwins);
     printf("Losses: %d\n", totallosses);
     printf("Games:  %d\n", totalwins + totallosses);
+    printf("Win Percentage: %.1f", win_percentage);
     printf("=======================\n");
     // =====================================================================
 
