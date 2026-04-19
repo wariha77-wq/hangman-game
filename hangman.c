@@ -99,6 +99,7 @@ int main(){
             printf("\nAttempts left: %d | Hints left: %d (type '?' for a hint)\n", attempts, hints);
             printf("Enter a letter: ");
             scanf(" %c", &guess);
+            while(getchar() != '\n');    //input 1 char only as guess
             guess = tolower(guess);
 
             // Hint System
