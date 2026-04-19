@@ -11,7 +11,8 @@
 // 5. Displays hangman
 // 6. Play again functionality without restarting the program
 // 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt
-// 8. Score tracking — wins and losses tracked across rounds  ← NEW
+// 8. Score tracking — wins and losses tracked across rounds
+// 9. Player statistics — win percentage shown mid-round and in final summary  ← NEW
 //=================================================================================================================
 
 int main(){
@@ -20,10 +21,9 @@ int main(){
 
     srand(time(NULL));
 
-    // ===================== NEW: Score Tracking =====================
     int totalwins = 0;
     int totallosses = 0;
-    // ===============================================================
+    float win_percentage = 0;
 
     do {
 
@@ -64,9 +64,15 @@ int main(){
             printf("Difficulty Level: Hard\n");
         }
 
-        // ===================== NEW: Show current score at start of each round =====================
-        printf("Score -> Wins: %d | Losses: %d\n", totalwins, totallosses);
-        // ==========================================================================================
+        // Show current score + win percentage at start of each round
+        // ===================== NEW: Win % shown mid-round =====================
+        if(totalwins + totallosses == 0){
+            printf("Score -> Wins: %d | Losses: %d | Win%%: N/A\n", totalwins, totallosses);
+        } else {
+            win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
+            printf("Score -> Wins: %d | Losses: %d | Win%%: %.1f%%\n", totalwins, totallosses, win_percentage);
+        }
+        // ======================================================================
 
         //To avoid the user to enter same alphabet again
         char used[26];
@@ -98,6 +104,7 @@ int main(){
             printf("\nAttempts left: %d | Hints left: %d (type '?' for a hint)\n", attempts, hints);
             printf("Enter a letter: ");
             scanf(" %c", &guess);
+            while(getchar() != '\n');
             guess = tolower(guess);
 
             // Hint System
@@ -248,16 +255,22 @@ int main(){
             roundresult = -1;
         }
 
-        // ===================== NEW: Update and display score =====================
+        // Update score
         if(roundresult == 1){
             totalwins++;
         } else if(roundresult == -1){
             totallosses++;
         }
-        printf("\n----- Score -----\n");
-        printf("Wins: %d | Losses: %d\n", totalwins, totallosses);
-        printf("-----------------\n");
-        // =========================================================================
+
+        // ===================== NEW: Mid-round stats with win % =====================
+        win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
+        printf("\n----- Player Statistics -----\n");
+        printf("Games Played: %d\n", totalwins + totallosses);
+        printf("Wins:         %d\n", totalwins);
+        printf("Losses:       %d\n", totallosses);
+        printf("Win%%:         %.1f%%\n", win_percentage);
+        printf("-----------------------------\n");
+        // ===========================================================================
 
         printf("\nDo you want to play again? (y/n): ");
         scanf(" %c", &playagain);
@@ -265,13 +278,14 @@ int main(){
 
     } while(playagain == 'y');
 
-    // ===================== NEW: Final summary on quit =====================
+    // Final summary on quit
+    win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
     printf("\n===== Final Score =====\n");
-    printf("Wins:   %d\n", totalwins);
-    printf("Losses: %d\n", totallosses);
-    printf("Games:  %d\n", totalwins + totallosses);
+    printf("Wins:           %d\n", totalwins);
+    printf("Losses:         %d\n", totallosses);
+    printf("Games:          %d\n", totalwins + totallosses);
+    printf("Win Percentage: %.1f%%\n", win_percentage);
     printf("=======================\n");
-    // =====================================================================
 
     printf("\nThanks for playing! Goodbye.\n");
 
