@@ -44,6 +44,25 @@ int main(){
 
     char addcustom;
     printf("===== Hangman Game =====\n");
+    char playername[35];
+    printf("Enter your Name:\n");
+    scanf("%34s", playername);
+    while(getchar() != '\n');
+
+    FILE *fp = fopen("hangmanscores.txt", "r");
+    if(fp != NULL){
+        char savedname[35];
+        fscanf(fp, "Player: %s\n", savedname);
+        fscanf(fp, "Wins: %d\n", &totalwins);
+        fscanf(fp, "Losses: %d\n", &totallosses);
+        fclose(fp);
+        if(strcmp(savedname, playername) == 0){
+            printf("Welcome back again %s. Wins: %d | Losses: %d\n", playername, totalwins, totallosses);
+        }
+        else{
+            printf("Welcome %s.\n", playername);
+        }
+    }
     printf("Do you want to add custom words? (y/n): ");
     scanf(" %c", &addcustom);
     while(getchar() != '\n');
@@ -393,6 +412,13 @@ int main(){
             totallosses++;
         }
 
+        FILE *savefp = fopen("hangmanscores.txt", "w");
+        if(savefp != NULL){
+            fprintf(savefp, "Player: %s\n", playername);
+            fprintf(savefp, "Wins: %d\n", totalwins);
+            fprintf(savefp, "Losses: %d\n", totallosses);
+            fclose(savefp);
+        }
         // Mid-round stats
         win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
         printf("\n----- Player Statistics -----\n");
