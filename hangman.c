@@ -116,21 +116,72 @@ int main(){
                 catchoice = 1;
             }
         }
+        //difficulty choice
+        printf("Select difficulty level (E = Easy, M = Medium, H = Hard)\n");
+        char difficultychoice;
+        scanf(" %c", &difficultychoice);
+        while(getchar() != '\n');
+        difficultychoice = toupper(difficultychoice);
 
-        // pick word from selected category
-        char *selectedword;
-        int totalwords = categorysizes[catchoice - 1];
-
+        char (*catptr)[20];
         switch(catchoice){
-            case 1: selectedword = animals[rand() % totalwords];        break;
-            case 2: selectedword = sports[rand() % totalwords];         break;
-            case 3: selectedword = programming[rand() % totalwords];    break;
-            case 4: selectedword = countries[rand() % totalwords];      break;
-            case 5: selectedword = movies[rand() % totalwords];         break;
-            case 6: selectedword = customwords[rand() % totalwords];    break; // NEW
-            default: selectedword = animals[rand() % totalwords];       break;
+            case 1:
+                catptr = animals;
+                break;
+            case 2:
+                catptr = sports;
+                break;
+            case 3:
+                catptr = programming;
+                break;
+            case 4:
+                catptr = countries;
+                break;
+            case 5:
+                catptr = movies;
+                break;
+            case 6:
+                catptr = customwords;
+                break;
+            default:
+                printf("No category selected.\n");
+            break;
         }
+            char *filteredwords[20];
+            int filteredcount = 0;
 
+            for(int i = 0; i < categorysizes[catchoice - 1]; i++){
+                int lengthofword = strlen(catptr[i]);
+            if(difficultychoice == 'E' && lengthofword <= 5){
+                filteredwords[filteredcount++] = catptr[i];
+            }
+            else if(difficultychoice == 'M' && lengthofword > 5 && lengthofword <= 7){
+                filteredwords[filteredcount++] = catptr[i];
+            }
+            else if(difficultychoice == 'H' && lengthofword > 7){
+                filteredwords[filteredcount++] = catptr[i];
+            }}
+
+            char *selectedword;
+            if(filteredcount > 0){
+                selectedword = filteredwords[rand() % filteredcount];
+            }
+            else{
+                printf("No words found. Using random word\n");
+                selectedword = catptr[rand() % categorysizes[catchoice - 1]];
+            }
+
+        int actuallength = strlen(selectedword);
+        if(actuallength <= 5){
+            printf("Difficulty: Easy\n");
+        }
+        else if(actuallength <= 7){
+            printf("Difficulty: Medium\n");
+        }
+        else{
+            printf("Difficulty: High\n");
+        }
+        
         printf("\nCategory: %s\n", categorynames[catchoice - 1]);
         printf("The word is: %s\n", selectedword); // Temp to check program
 
@@ -147,16 +198,7 @@ int main(){
 
         char guess;
         int correct;
-
-        //Difficulty level based on Word length
-        int attempts=6;
-        if(length<=5){
-            printf("Difficulty Level: Easy\n");
-        }else if(length<=7){
-            printf("Difficulty Level: Medium\n");
-        }else {
-            printf("Difficulty Level: Hard\n");
-        }
+        int attempts = 6;
 
         // Show current score + win percentage at start of each round
         if(totalwins + totallosses == 0){
