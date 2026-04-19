@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<time.h> 
 #include<ctype.h>
+#include<string.h>
 
 //===========================================Project Features=============================================
 // 1. Basic (random word selection from word bank)
@@ -13,7 +14,8 @@
 // 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt
 // 8. Score tracking — wins and losses tracked across rounds
 // 9. Player statistics — win percentage shown mid-round and in final summary
-// 10. Word categories — player picks a category before each round  ← NEW
+// 10. Word categories — player picks a category before each round
+// 11. Custom word bank — player adds their own words as a 6th category  ← NEW
 //=================================================================================================================
 
 int main(){
@@ -26,20 +28,55 @@ int main(){
     int totallosses = 0;
     float win_percentage = 0;
 
-    // ===================== NEW: Word Categories =====================
+    // Word Categories
     char animals[][20]    = {"elephant","tiger","giraffe","dolphin","penguin","cheetah","kangaroo","cobra"};
     char sports[][20]     = {"cricket","football","basketball","swimming","badminton","volleyball","hockey","tennis"};
     char programming[][20]= {"array","pointer","function","variable","compiler","recursion","loop","syntax"};
     char countries[][20]  = {"pakistan","germany","australia","brazil","canada","japan","france","egypt"};
     char movies[][20]     = {"inception","avatar","interstellar","gladiator","titanic","joker","parasite","dune"};
 
-    int categorysizes[5]  = {8, 8, 8, 8, 8};
-    char categorynames[5][20] = {"Animals","Sports","Programming","Countries","Movies"};
-    // ================================================================
+    int categorysizes[6]  = {8, 8, 8, 8, 8, 0};
+    char categorynames[6][20] = {"Animals","Sports","Programming","Countries","Movies","Custom"};
+
+    // ===================== NEW: Custom Word Bank =====================
+    char customwords[10][20];
+    int customcount = 0;
+
+    char addcustom;
+    printf("===== Hangman Game =====\n");
+    printf("Do you want to add custom words? (y/n): ");
+    scanf(" %c", &addcustom);
+    while(getchar() != '\n');
+    addcustom = tolower(addcustom);
+
+    if(addcustom == 'y'){
+        int numwords = 0;
+        printf("How many words do you want to add? (max 10): ");
+        scanf("%d", &numwords);
+        while(getchar() != '\n');
+
+        if(numwords < 1) numwords = 1;
+        if(numwords > 10) numwords = 10;
+
+        for(int i = 0; i < numwords; i++){
+            printf("Enter word %d: ", i + 1);
+            scanf("%19s", customwords[i]);
+            while(getchar() != '\n');
+
+            // convert to lowercase
+            for(int j = 0; customwords[i][j] != '\0'; j++){
+                customwords[i][j] = tolower(customwords[i][j]);
+            }
+            customcount++;
+        }
+        categorysizes[5] = customcount;
+        printf("%d custom word(s) added successfully!\n", customcount);
+    }
+    // =================================================================
 
     do {
 
-        // ===================== NEW: Category Selection Menu =====================
+        // Category Selection Menu
         int catchoice = 0;
         printf("\n===== Choose a Category =====\n");
         printf("1. Animals\n");
@@ -47,15 +84,37 @@ int main(){
         printf("3. Programming\n");
         printf("4. Countries\n");
         printf("5. Movies\n");
-        printf("=============================\n");
-        printf("Enter choice (1-5): ");
+
+        // ===================== NEW: Only show Custom if words were added =====================
+        if(customcount > 0){
+            printf("6. Custom (%d words)\n", customcount);
+            printf("=============================\n");
+            printf("Enter choice (1-6): ");
+        } else {
+            printf("=============================\n");
+            printf("Enter choice (1-5): ");
+        }
+        // =====================================================================================
+
         scanf("%d", &catchoice);
         while(getchar() != '\n');
 
         // validate input
-        if(catchoice < 1 || catchoice > 5){
-            printf("Invalid choice! Defaulting to Animals.\n");
-            catchoice = 1;
+        if(customcount > 0){
+            if(catchoice < 1 || catchoice > 6){
+                printf("Invalid choice! Defaulting to Animals.\n");
+                catchoice = 1;
+            }
+        } else {
+            if(catchoice < 1 || catchoice > 5){
+                printf("Invalid choice! Defaulting to Animals.\n");
+                catchoice = 1;
+            }
+            // block custom if no words added
+            if(catchoice == 6){
+                printf("No custom words added. Defaulting to Animals.\n");
+                catchoice = 1;
+            }
         }
 
         // pick word from selected category
@@ -63,17 +122,16 @@ int main(){
         int totalwords = categorysizes[catchoice - 1];
 
         switch(catchoice){
-            case 1: selectedword = animals[rand() % totalwords];    break;
-            case 2: selectedword = sports[rand() % totalwords];     break;
-            case 3: selectedword = programming[rand() % totalwords];break;
-            case 4: selectedword = countries[rand() % totalwords];  break;
-            case 5: selectedword = movies[rand() % totalwords];     break;
-            default: selectedword = animals[rand() % totalwords];   break;
+            case 1: selectedword = animals[rand() % totalwords];        break;
+            case 2: selectedword = sports[rand() % totalwords];         break;
+            case 3: selectedword = programming[rand() % totalwords];    break;
+            case 4: selectedword = countries[rand() % totalwords];      break;
+            case 5: selectedword = movies[rand() % totalwords];         break;
+            case 6: selectedword = customwords[rand() % totalwords];    break; // NEW
+            default: selectedword = animals[rand() % totalwords];       break;
         }
 
         printf("\nCategory: %s\n", categorynames[catchoice - 1]);
-        // ========================================================================
-
         printf("The word is: %s\n", selectedword); // Temp to check program
 
         int length=0;
@@ -118,13 +176,11 @@ int main(){
         int roundresult = 0; // 1 = win, -1 = loss
 
         while(attempts>0){
-            //printf _ _ acc to word
             printf("\nCategory: %s | Word: ", categorynames[catchoice - 1]);
             for(int i=0;i<length;i++){
                 printf("%c ",guessed[i]);
             }
 
-            //Printf the already used letters
             printf("\nUsed letters: ");
             if(usedcount==0){
                 printf("None");
@@ -180,7 +236,6 @@ int main(){
             }
             else {
 
-                //To avoid the user to enter same alphabet again
                 int alreadyused=0;
                 for(int i=0;i<usedcount;i++){
                     if(guess==used[i]){
@@ -296,7 +351,7 @@ int main(){
             totallosses++;
         }
 
-        // Mid-round stats with win %
+        // Mid-round stats
         win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
         printf("\n----- Player Statistics -----\n");
         printf("Games Played: %d\n", totalwins + totallosses);
