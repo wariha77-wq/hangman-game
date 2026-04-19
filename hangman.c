@@ -12,7 +12,8 @@
 // 6. Play again functionality without restarting the program
 // 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt
 // 8. Score tracking — wins and losses tracked across rounds
-// 9. Player statistics — win percentage shown mid-round and in final summary  ← NEW
+// 9. Player statistics — win percentage shown mid-round and in final summary
+// 10. Word categories — player picks a category before each round  ← NEW
 //=================================================================================================================
 
 int main(){
@@ -25,20 +26,55 @@ int main(){
     int totallosses = 0;
     float win_percentage = 0;
 
+    // ===================== NEW: Word Categories =====================
+    char animals[][20]    = {"elephant","tiger","giraffe","dolphin","penguin","cheetah","kangaroo","cobra"};
+    char sports[][20]     = {"cricket","football","basketball","swimming","badminton","volleyball","hockey","tennis"};
+    char programming[][20]= {"array","pointer","function","variable","compiler","recursion","loop","syntax"};
+    char countries[][20]  = {"pakistan","germany","australia","brazil","canada","japan","france","egypt"};
+    char movies[][20]     = {"inception","avatar","interstellar","gladiator","titanic","joker","parasite","dune"};
+
+    int categorysizes[5]  = {8, 8, 8, 8, 8};
+    char categorynames[5][20] = {"Animals","Sports","Programming","Countries","Movies"};
+    // ================================================================
+
     do {
 
-        //word list
-        char words[][20]={"fortuner","excellent","doctor","jaguar","showroom",
-                     "mango","french","holiday","festival","beast","hangman"};
+        // ===================== NEW: Category Selection Menu =====================
+        int catchoice = 0;
+        printf("\n===== Choose a Category =====\n");
+        printf("1. Animals\n");
+        printf("2. Sports\n");
+        printf("3. Programming\n");
+        printf("4. Countries\n");
+        printf("5. Movies\n");
+        printf("=============================\n");
+        printf("Enter choice (1-5): ");
+        scanf("%d", &catchoice);
+        while(getchar() != '\n');
 
-        //number of words
-        int totalwords=sizeof(words)/sizeof(words[0]);
+        // validate input
+        if(catchoice < 1 || catchoice > 5){
+            printf("Invalid choice! Defaulting to Animals.\n");
+            catchoice = 1;
+        }
 
-        //picking random word
-        int randomIndex= rand() % totalwords;
-        char *selectedword = words[randomIndex];
+        // pick word from selected category
+        char *selectedword;
+        int totalwords = categorysizes[catchoice - 1];
 
-        printf("The word is :%s\n",selectedword); //Temp to check program
+        switch(catchoice){
+            case 1: selectedword = animals[rand() % totalwords];    break;
+            case 2: selectedword = sports[rand() % totalwords];     break;
+            case 3: selectedword = programming[rand() % totalwords];break;
+            case 4: selectedword = countries[rand() % totalwords];  break;
+            case 5: selectedword = movies[rand() % totalwords];     break;
+            default: selectedword = animals[rand() % totalwords];   break;
+        }
+
+        printf("\nCategory: %s\n", categorynames[catchoice - 1]);
+        // ========================================================================
+
+        printf("The word is: %s\n", selectedword); // Temp to check program
 
         int length=0;
         while(selectedword[length]!='\0'){
@@ -65,14 +101,12 @@ int main(){
         }
 
         // Show current score + win percentage at start of each round
-        // ===================== NEW: Win % shown mid-round =====================
         if(totalwins + totallosses == 0){
             printf("Score -> Wins: %d | Losses: %d | Win%%: N/A\n", totalwins, totallosses);
         } else {
             win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
             printf("Score -> Wins: %d | Losses: %d | Win%%: %.1f%%\n", totalwins, totallosses, win_percentage);
         }
-        // ======================================================================
 
         //To avoid the user to enter same alphabet again
         char used[26];
@@ -85,7 +119,7 @@ int main(){
 
         while(attempts>0){
             //printf _ _ acc to word
-            printf("\nWord: ");
+            printf("\nCategory: %s | Word: ", categorynames[catchoice - 1]);
             for(int i=0;i<length;i++){
                 printf("%c ",guessed[i]);
             }
@@ -262,7 +296,7 @@ int main(){
             totallosses++;
         }
 
-        // ===================== NEW: Mid-round stats with win % =====================
+        // Mid-round stats with win %
         win_percentage = (float)totalwins / (float)(totalwins + totallosses) * 100;
         printf("\n----- Player Statistics -----\n");
         printf("Games Played: %d\n", totalwins + totallosses);
@@ -270,7 +304,6 @@ int main(){
         printf("Losses:       %d\n", totallosses);
         printf("Win%%:         %.1f%%\n", win_percentage);
         printf("-----------------------------\n");
-        // ===========================================================================
 
         printf("\nDo you want to play again? (y/n): ");
         scanf(" %c", &playagain);
