@@ -11,11 +11,11 @@
 // 4. Displays the letters already entered by user regardless of correct or incorrect 
 // 5. Displays hangman
 // 6. Play again functionality without restarting the program
-// 7. Hint system — type '?' to reveal a letter at the cost of 1 attempt
-// 8. Score tracking — wins and losses tracked across rounds
-// 9. Player statistics — win percentage shown mid-round and in final summary
-// 10. Word categories — player picks a category before each round
-// 11. Custom word bank — player adds their own words as a 6th category
+// 7. Hint system â€” type '?' to reveal a letter at the cost of 1 attempt
+// 8. Score tracking â€” wins and losses tracked across rounds
+// 9. Player statistics â€” win percentage shown mid-round and in final summary
+// 10. Word categories â€” player picks a category before each round
+// 11. Custom word bank â€” player adds their own words as a 6th category
 //=================================================================================================================
 
 // ===================== STRUCTURE: Player =====================
